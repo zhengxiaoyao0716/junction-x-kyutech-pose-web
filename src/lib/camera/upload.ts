@@ -12,9 +12,9 @@ export interface UploadRespJson {
 }
 
 export async function uploadImage(url: string, image: Blob) {
-	const base64 = await blobToBase64(image);
+	// const base64 = await blobToBase64(image);
 	const formData = new FormData();
-	formData.set('image', base64);
-	const resp = await fetch(url, { method: 'POST', body: formData });
-	return (await resp.json()) as UploadRespJson;
+	// formData.set('image', base64);
+	formData.append('file', image);
+	await fetch(url, { method: 'POST', body: formData });
 }

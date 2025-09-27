@@ -8,7 +8,8 @@ export const load: LayoutLoad = async () => {
 		'win.title': 'Pose-Web'
 	};
 	const api = {
-		upload: '/upload_screenshot/'
+		upload: '/api/upload_frame/',
+		download: '/api/download_frame'
 	};
 	return { env, api };
 };

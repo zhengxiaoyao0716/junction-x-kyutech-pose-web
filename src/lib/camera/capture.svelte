@@ -15,7 +15,9 @@
 		});
 	}
 
-	export async function captureCameraStream(video: HTMLVideoElement) {
+	export async function takeVideoSnapshot() {
+		const video = document.querySelector('video') as HTMLVideoElement;
+		if (!video) return;
 		const canvas = new OffscreenCanvas(video.videoWidth, video.videoHeight);
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return null;
@@ -28,31 +30,30 @@
 
 <script>
 	const { stream }: CaptureProps = $props();
+
+	$effect(() => {
+		return () => {
+			for (const track of stream.getTracks()) {
+				track.stop();
+			}
+		};
+	});
 </script>
 
-<div id="capture">
-	<video
-		{@attach (video) => {
-			video.srcObject = stream;
-			video.play();
-		}}
-	>
-		<track kind="captions" srclang="en" label="English captions" src="" />
-	</video>
-</div>
+<video
+	{@attach (video) => {
+		video.srcObject = stream;
+		video.play();
+	}}
+>
+	<track kind="captions" srclang="en" label="English captions" src="" />
+</video>
 
 {#snippet NoCamera()}
-	<div id="capture">
-		<img alt="no-camera" src="/images/photo_camera.svg" style:opacity={0.3} />
-	</div>
+	<img alt="no-camera" src="/images/photo_camera.svg" style:opacity={0.3} />
 {/snippet}
 
 <style>
-	#capture {
-		width: 100%;
-		height: 100%;
-		border: 1px solid var(--text-primary);
-	}
 	img,
 	video {
 		width: 100%;

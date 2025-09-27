@@ -1,31 +1,21 @@
 <script lang="ts" module>
 	export interface PreviewProps {
-		image: string;
+		source: string;
 	}
-
 	export { NoImage };
 </script>
 
 <script>
-	const { image } = $props();
+	const { source }: PreviewProps = $props();
 </script>
 
-<div id="preview">
-	<img alt="preview" src={image} />
-</div>
+<img alt="preview" src={source} />
 
 {#snippet NoImage()}
-	<div id="preview">
-		<img alt="no-preview" src="/images/broken_image.svg" style:opacity={0.3} />
-	</div>
+	<img alt="no-preview" src="/images/broken_image.svg" style:opacity={0.3} />
 {/snippet}
 
 <style>
-	#preview {
-		width: 100%;
-		height: 100%;
-		border: 1px solid var(--text-primary);
-	}
 	img {
 		width: 100%;
 		height: 100%;

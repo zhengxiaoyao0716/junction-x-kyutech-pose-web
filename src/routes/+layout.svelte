@@ -1,11 +1,13 @@
 <script lang="ts">
 	import '$lib/assets/styles/root.css';
 	import '$lib/assets/styles/theme.css';
+	import { iconFontCssUrl } from '$lib/icon.svelte';
 
 	let { data, children } = $props();
 </script>
 
 <svelte:head>
+	<link rel="stylesheet" href={iconFontCssUrl} />
 	<title>{data.env['win.title']}</title>
 </svelte:head>
 
@@ -27,7 +29,7 @@
 	></div>
 {/snippet}
 
-<style>
+<style lang="postcss">
 	.bg {
 		position: absolute;
 		pointer-events: none;
@@ -59,6 +61,7 @@
 		&:disabled {
 			color: var(--text-secondary);
 			cursor: default;
+			pointer-events: none;
 		}
 	}
 </style>

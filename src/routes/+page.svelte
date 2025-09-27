@@ -1,43 +1,65 @@
 <script lang="ts">
 	import Button from '$lib/button.svelte';
 	import Capture, {
-		captureCameraStream as captureVideoStream,
 		getAvailableCameras,
 		NoCamera,
-		openCameraStream
+		openCameraStream,
+		takeVideoSnapshot
 	} from '$lib/camera/capture.svelte';
 	import Preview, { NoImage } from '$lib/camera/preview.svelte';
 	import { uploadImage } from '$lib/camera/upload.js';
+	import Icon from '$lib/icon.svelte';
 
 	const { data } = $props();
 
 	let cameraIndex = $state(0);
 	const cameraDevices = getAvailableCameras();
-	let captureImage = $state('');
-	let previewImage = $state('');
+	let recordTimer = $state(0);
+	let snapshotImage = $state('');
+	let previewSource = $state('');
 
-	const onCapture = async () => {
-		if (captureImage) URL.revokeObjectURL(captureImage);
-		const video = document.querySelector('#capture video') as HTMLVideoElement;
-		const blob = await captureVideoStream(video);
+	const onRecord = async () => {
+		recordTimer = 1000.0 / 15.0;
+		if (snapshotImage) URL.revokeObjectURL(snapshotImage);
+		snapshotImage = '';
+	};
+
+	const snapshot = async () => {
+		if (snapshotImage) URL.revokeObjectURL(snapshotImage);
+		const blob = await takeVideoSnapshot();
 		if (!blob) return;
-		captureImage = URL.createObjectURL(blob);
-		const { output_url } = await uploadImage(data.api.upload, blob);
-		previewImage = output_url;
+		recordTimer = 0;
+		snapshotImage = URL.createObjectURL(blob);
+		await uploadImage(data.api.upload, blob);
+		previewSource = data.api.download;
 	};
 
 	$effect(() => {
+		if (recordTimer <= 0) return;
+		let i = 0;
+		let timer = setInterval(async () => {
+			const blob = await takeVideoSnapshot();
+			if (!blob) return;
+			await uploadImage(data.api.upload, blob);
+			previewSource = data.api.download + `?t=${++i}`;
+		}, recordTimer);
 		return () => {
-			if (captureImage) URL.revokeObjectURL(captureImage);
+			clearInterval(timer);
+		};
+	});
+	$effect(() => {
+		return () => {
+			if (snapshotImage) URL.revokeObjectURL(snapshotImage);
 		};
 	});
 
-	const reset = () => {
-		if (captureImage) {
-			URL.revokeObjectURL(captureImage);
-			captureImage = '';
+	const stopAll = () => {
+		recordTimer = 0;
+		if (snapshotImage) {
+			URL.revokeObjectURL(snapshotImage);
+			snapshotImage = '';
 		}
-		previewImage = '';
+		previewSource = '';
 	};
 </script>
 
@@ -62,7 +84,6 @@
 					<option value={-1}>None (close)</option>
 				</select>
 			</label>
-			<Button onclick={reset}>RESET</Button>
 		</div>
 		<div id="body">
 			<section>
@@ -71,10 +92,9 @@
 					{#await stream}
 						{@render NoCamera()}
 					{:then stream}
-						{#if captureImage}
-							<Preview image={captureImage} />
-						{:else}
-							<Capture {stream} />
+						<Capture {stream} />
+						{#if snapshotImage}
+							<Preview source={snapshotImage} />
 						{/if}
 					{/await}
 				{:else}
@@ -82,16 +102,28 @@
 				{/if}
 			</section>
 			<section>
-				{#if previewImage}
-					<Preview image={previewImage} />
+				{#if previewSource}
+					<Preview source={previewSource} />
+				{:else if snapshotImage}
+					<Preview source={snapshotImage} />
 				{:else}
 					{@render NoImage()}
 				{/if}
 			</section>
 		</div>
 		<div id="foot">
-			<Button disabled={!camera} onclick={onCapture}>
-				<span>Capture</span>
+			<Button disabled={!camera || recordTimer > 0} onclick={onRecord}>
+				<Icon name={recordTimer > 0 ? 'screen_record' : 'play_circle'} />
+				<span>Record</span>
+			</Button>
+			<Button disabled={!camera} onclick={snapshot}>
+				<Icon name="camera" />
+				<span>Snapshot</span>
+			</Button>
+			<hr />
+			<Button onclick={stopAll}>
+				<Icon name="stop_circle" />
+				<span>Stop</span>
 			</Button>
 		</div>
 	{/await}
@@ -132,6 +164,14 @@
 	#body > section {
 		width: 48svw;
 		height: 36svw;
+		position: relative;
+	}
+	section > :global(img),
+	section > :global(video) {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		border: 1px solid var(--text-primary);
 	}
 
 	#foot {
