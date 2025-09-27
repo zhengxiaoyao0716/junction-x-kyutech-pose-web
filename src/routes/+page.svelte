@@ -66,8 +66,8 @@
 </script>
 
 <div id="page">
-	<h2>Skeleton-based Action Recognition</h2>
-	<h2>for Sports/Training Venues</h2>
+	<h3>Skeleton-based Action Recognition</h3>
+	<h3>for Sports/Training Venues</h3>
 	{#await cameraDevices}
 		<div id="head"></div>
 		<div id="body">
@@ -143,7 +143,7 @@
 		flex-direction: column;
 		font-size: 1.5em;
 	}
-	#page > h2 {
+	#page > h3 {
 		margin: 0.2em;
 	}
 
@@ -167,19 +167,23 @@
 	#body {
 		display: flex;
 		gap: 0.5em;
+		max-height: calc(100% - 10em);
+		position: relative;
 	}
 	#body > section {
 		width: 44svw;
 		height: 33svw;
+		max-height: 100%;
 		position: relative;
 	}
 	@media screen and (orientation: portrait) {
 		#body {
+			flex: 1 1 auto;
 			flex-direction: column;
 		}
 		#body > section {
+			flex: 1 1 auto;
 			width: 88svw;
-			height: 66svw;
 		}
 	}
 

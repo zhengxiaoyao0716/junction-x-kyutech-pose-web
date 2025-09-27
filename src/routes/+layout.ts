@@ -7,9 +7,10 @@ export const load: LayoutLoad = async () => {
 	const env = {
 		'win.title': 'Pose-Web'
 	};
+	const host = '';
 	const api = {
-		upload: '/api/upload_frame/',
-		download: '/api/download_frame'
+		upload: `${host}/api/upload_frame/`,
+		download: `${host}/api/download_frame`
 	};
 	return { env, api };
 };

@@ -6,10 +6,11 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: 'http://192.168.16.124:8000',
+				target: 'http://127.0.0.1:8000',
 				changeOrigin: true,
 				timeout: 3000
 			}
-		}
+		},
+		allowedHosts: true
 	}
 });
