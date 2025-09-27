@@ -1,0 +1,14 @@
+body {
+	--bg-main: #232323;
+
+	--text-stress: #ffffff;
+	--text-primary: #eeeeee;
+	--text-secondary: #cccccc;
+
+	--mark-main: #ff8000;
+}
+
+body {
+	background: var(--bg-main);
+	font-family: 'Courier New', Courier, monospace;
+}
