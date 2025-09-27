@@ -1,13 +1,16 @@
 <script lang="ts">
+	import '$lib/assets/styles/material-symbols-outlined.css';
 	import '$lib/assets/styles/root.css';
 	import '$lib/assets/styles/theme.css';
 	import { iconFontCssUrl } from '$lib/icon.svelte';
 
 	let { data, children } = $props();
+
+	$effect(() => console.log('Icon Font CSS URL:', iconFontCssUrl));
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href={iconFontCssUrl} />
+	<!-- <link rel="stylesheet" href={iconFontCssUrl} /> -->
 	<title>{data.env['win.title']}</title>
 </svelte:head>
 

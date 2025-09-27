@@ -6,7 +6,9 @@
 	export async function getAvailableCameras() {
 		const available = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
 		if (!available) return [];
+		const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 		const devices = await navigator.mediaDevices.enumerateDevices();
+		stream.getTracks().forEach((track) => track.stop());
 		return devices.filter((device) => device.kind === 'videoinput');
 	}
 	export async function openCameraStream(deviceId: string) {
@@ -33,9 +35,7 @@
 
 	$effect(() => {
 		return () => {
-			for (const track of stream.getTracks()) {
-				track.stop();
-			}
+			stream.getTracks().forEach((track) => track.stop());
 		};
 	});
 </script>

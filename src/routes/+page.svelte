@@ -31,7 +31,9 @@
 		recordTimer = 0;
 		snapshotImage = URL.createObjectURL(blob);
 		await uploadImage(data.api.upload, blob);
-		previewSource = data.api.download;
+		setTimeout(() => {
+			previewSource = data.api.download + `?t=${Math.random()}`;
+		}, 100);
 	};
 
 	$effect(() => {
@@ -64,6 +66,8 @@
 </script>
 
 <div id="page">
+	<h2>Skeleton-based Action Recognition</h2>
+	<h2>for Sports/Training Venues</h2>
 	{#await cameraDevices}
 		<div id="head"></div>
 		<div id="body">
@@ -139,6 +143,9 @@
 		flex-direction: column;
 		font-size: 1.5em;
 	}
+	#page > h2 {
+		margin: 0.2em;
+	}
 
 	#head {
 		margin: 0.5em;
@@ -146,7 +153,7 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 0.5em;
-		width: 96svw;
+		width: 88svw;
 	}
 	#head select {
 		font-size: 0.8em;
@@ -162,10 +169,20 @@
 		gap: 0.5em;
 	}
 	#body > section {
-		width: 48svw;
-		height: 36svw;
+		width: 44svw;
+		height: 33svw;
 		position: relative;
 	}
+	@media screen and (orientation: portrait) {
+		#body {
+			flex-direction: column;
+		}
+		#body > section {
+			width: 88svw;
+			height: 66svw;
+		}
+	}
+
 	section > :global(img),
 	section > :global(video) {
 		position: absolute;

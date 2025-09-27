@@ -8,3 +8,15 @@ body {
 	position: relative;
 	overflow: hidden;
 }
+
+@media screen and (orientation: portrait) {
+  #root.landscape {
+    height: 100svw;
+    width: 100svh;
+    transform-origin: left top;
+    transform: rotate(90deg) translateY(-100%);
+  }
+  #root.landscape.reverse {
+    transform: rotate(-90deg) translateX(-100%);
+  }
+}
